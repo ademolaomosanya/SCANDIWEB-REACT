@@ -1,0 +1,28 @@
+.nav{
+    display: flex;
+    align-items: center;
+    margin-left: 60px;
+    margin-right: 60px;
+    cursor:pointer;
+}
+.nav_link{
+    font-family: 'Raleway';
+font-style: normal;
+font-weight: 200;
+font-size: 16px;
+display: flex;
+padding-left: 70px;
+text-transform: uppercase;
+gap: 16px;
+
+}
+.sign{
+    float:right;
+    align-items: center;
+    position: absolute;
+    right: 7%;
+}
+.cart{
+    margin-left: 16px;
+    margin-bottom: 6px;
+}
