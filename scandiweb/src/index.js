@@ -5,9 +5,11 @@ import App from './App';
 
 
 const client = new ApolloClient({
-  uri: "https://scandiweb-seven.vercel.app/",
+  uri: "http://localhost:4000/",
   cache: new InMemoryCache()
 });
+
+//https://scandiweb-seven.vercel.app/
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

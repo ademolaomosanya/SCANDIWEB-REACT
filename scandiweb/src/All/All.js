@@ -1,6 +1,8 @@
 import React from 'react'
 import './All.css'
 import { useQuery, gql } from "@apollo/client";
+import { Link } from 'react-router-dom';
+
 
 const STORE_QUERY = gql`
 query{
@@ -9,7 +11,7 @@ query{
     products{
       id
       name
-    gallery
+      gallery
       category
      prices{
       amount
@@ -27,52 +29,33 @@ export default function All() {
 
   if (loading) return "Loading...";
   if (error) return <pre>{error.message}</pre>
-  console.log(data.categories[0])
-  const firstUser = data.categories[0].products
-  const firstUser1 = data.categories[0]
+
+  const firstCategory = data.categories[0];
+
+
+  console.log(firstCategory.products)
 
   return (
 
     <div>
-      <h1>{firstUser1.name}</h1>
 
-      <div className='container'>
-        {Object.keys(firstUser).map(key => (
-          <div className='card' key={key}>
-            <img className='card-image ' src={firstUser[key].gallery[0]} alt='' />
-
-          <div className='details'>
-          <p className='product_name'>{firstUser[key].name}</p>
-          <p>{firstUser[key].prices[0].currency.symbol}{firstUser[key].prices[0].amount}</p>
+      <h3>{firstCategory.name}</h3>
+      <div  className='container'>
+        {firstCategory.products.map((product) => (
+          <div className='card' key={product.id}>
+            <Link to={`/products/${product.id}`}>
+            <img className='card-image ' src={product.gallery[0]} alt='' />
+              <div className='details'>
+              <p className='product_name'>{product.name}</p>
+              <p>{product.prices[0].currency.symbol}{product.prices[0].amount}</p>
+            </div>
+            </Link>
           </div>
-          </div>
-
         ))}
+       
       </div>
+
     </div>
-
-
-
-
-
-
-
-    // <div>
-    //   {data.categories.map(category => (        
-    //       <div>
-    //         {category.products.map(product => (
-    //          <>          
-    //          <p key={product.id}>{product.name}</p>
-
-    //          </>
-    //         ))}
-    //       </div>
-
-    //   ))}
-    // </div>
-
-
-
 
 
 
@@ -90,8 +73,3 @@ export default function All() {
 
 
 
-// {firstUser[key].gallery.map((picture) => (
-//   <div key={picture.id}>
-//     <img className='Image' src={picture} alt=''/>
-//   </div>
-// ))}
