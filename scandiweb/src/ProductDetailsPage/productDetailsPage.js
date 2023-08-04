@@ -1,102 +1,98 @@
-import React from 'react';
+import { React, useContext } from 'react';
 import './productDetailsPage.css'
-import { useQuery, useMutation } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 import { useParams } from 'react-router-dom';
-import { gql } from '@apollo/client';
-import { ADD_TO_CART_MUTATION } from '../graphql/mutations'
-
-const GET_PRODUCT = gql`
-query Product($productId: String!) {
-  product(id: $productId) {
-    id
-    name
-    gallery
-    description
-    attributes {
-      id
-      items {
-        displayValue
-        id
-        value
-      }
-      name
-      type
-    }
-    inStock
-    category
-    brand
-    prices {
-      amount
-      currency {
-        label
-        symbol
-      }
-    }
-  }
-}
-`;
+import { GET_PRODUCT } from '../graphql/queries';
+import CartContext from '../Context/context';
 
 
 const ProductPage = () => {
-  const [addToCart] = useMutation(ADD_TO_CART_MUTATION);
-  const handleAddToCart = (productId) => {
-    addToCart({
-      variables: {
-        productId: productId,
-      },
-    })
-      .then((response) => {
-        // Handle successful addition to cart
-        console.log(response.data);
-      })
-      .catch((error) => {
-        // Handle error
-        console.error(error);
-      });
+
+  const { productId } = useParams();
+
+  const { cartState, dispatch } = useContext(CartContext);
+
+
+
+  const removeFromCart = (itemId) => {
+    dispatch({ type: 'REMOVE_FROM_CART', payload: itemId });
   };
 
-  const { productId } = useParams(); // Get the product ID from the URL parameter
-  console.log(productId)
+
   const { loading, error, data } = useQuery(GET_PRODUCT, {
-    variables: { productId }, // Pass the product ID as a variable to the GraphQL query
+    variables: { productId },
   });
 
+
+
+
   if (loading) {
-    return <p>Loading...</p>; // Render a loading indicator while the data is being fetched
+    return <p>Loading...</p>;
   }
 
   if (error) {
-    return <p>Error: {error.message}</p>; // Render an error message if there's an error
+    return <p>Error: {error.message}</p>;
   }
 
-  const { product } = data; // Assuming the GraphQL query returns a 'product' field
-  console.log(product.attributes[0].items)
+  const { product } = data;
+  const { cartItems } = cartState;
+
+
+
   return (
-    <div className='details'>
+    <div className='prod_details'>
 
 
-      <div>
+
+      <div className='detail_pics'>
         {product.gallery.map((picture) => (
           <img className='detail_pic' src={picture} alt='' />
         ))}
       </div>
 
-      <div>
-        <img className='prod_img' src={product.gallery[0]} alt='' />
-      </div>
 
-      <div className='properties'>
-        <h2>{product.name}</h2>
-        <p>{product.attributes[0].id}:</p>
-        {product.attributes[0].items.map((attribute) => (
-          <div>
-            <p>{attribute.displayValue}</p>
+      <div className='group'>
+        <div>
+          <img className='prod_img' src={product.gallery[0]} alt='' />
+        </div>
+
+        <div className='properties'>
+          <h2>{product.name}</h2>
+          <p className='id'>{product.attributes[0].id}:</p>
+          <div className='value'>
+            {product.attributes[0].items.map((attribute) => (
+              <p className='box' >{attribute.displayValue}</p>
+            ))}
           </div>
-        ))}
-        <p>Price:</p>
-        <p>{product.prices[0].currency.symbol}{product.prices[0].amount}</p>
-        <button onClick={() => handleAddToCart(product.id)}>Add to cart</button>
-        <p>{product.description}</p>
+          <p>PRICE:</p>
+          <p className='price'>{product.prices[0].currency.symbol}{product.prices[0].amount}</p>
+
+
+          {cartItems.some((p) => p.id === product.id) ? (
+            <button
+              className='prod_button'
+              onClick={() => removeFromCart(product.id)
+              }
+            >
+              Remove from Cart
+            </button>
+          ) : (
+            <button
+              className='prod_button'
+              onClick={() =>
+                dispatch({
+                  type: "ADD_TO_CART",
+                  payload: product,
+                })
+              }
+            >
+              Add to Cart
+            </button>
+          )}
+
+          <p>{product.description}</p>
+        </div>
+
       </div>
 
     </div>
@@ -105,15 +101,3 @@ const ProductPage = () => {
 };
 
 export default ProductPage;
-
-
-
-// import React from 'react';
-
-// export default function ProductPage() {
-// return(
-//   <>
-//   <h1>hi</h1>
-//   </>
-// )
-// }

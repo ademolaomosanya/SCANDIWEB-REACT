@@ -38,8 +38,8 @@ export default function Clothes() {
     <h3>{firstCategory.name}</h3>
     <div  className='container'>
       {firstCategory.products.map((product) => (
-        <div className='card' key={product.id}>
-          <Link to={`/products/${product.id}`}>
+        <div className='card_product' key={product.id}>
+          <Link className='link' to={`/products/${product.id}`}>
           <img className='card-image ' src={product.gallery[2]} alt='' />
             <div className='details'>
             <p className='product_name'>{product.name}</p>
